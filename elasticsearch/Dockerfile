@@ -1,8 +1,6 @@
+# 官方 ES 基础镜像
 FROM elasticsearch:8.17.0
 
-RUN bin/elasticsearch-plugin install analysis-icu --batch
-
-ARG IK_VERSION=8.17.0
-ARG IK_REPO=https://github.com/infinilabs/analysis-ik/releases/download/v${IK_VERSION}/elasticsearch-analysis-ik-${IK_VERSION}.zip
-
-RUN bin/elasticsearch-plugin install --batch ${IK_REPO} || true
+# 安装 IK 分词（版本严格和 ES 一致）
+RUN elasticsearch-plugin install --batch \
+    https://release.infinilabs.com/analysis-ik/stable/elasticsearch-analysis-ik-8.17.0.zip

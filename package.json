@@ -1,0 +1,18 @@
+{
+    "name": "knowledgehub",
+    "version": "0.0.1",
+    "private": true,
+    "description": "Knowledge Hub monorepo",
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "build": "npm run build --workspaces --if-present",
+        "dev:backend": "npm run start:dev --workspace backend",
+        "build:backend": "npm run build --workspace backend"
+    },
+    "engines": {
+        "node": ">=18"
+    }
+}

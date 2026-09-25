@@ -69,7 +69,7 @@ export interface ExtractionResult {
 
 /**
  * 管线内部使用的「文档快照」：
- * Postgres 元数据 + Mongo 正文拼在一起，避免各服务重复查库。
+ * Postgres 元数据 + 正文拼在一起，避免各服务重复查库。
  */
 export interface PipelineDocument {
   id: string;

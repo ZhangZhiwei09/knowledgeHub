@@ -5,8 +5,6 @@ import {
   Logger,
 } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { EntityManager } from 'typeorm';
 import { nextSnowflakeId } from '../common/snowflake-id';
 import { CreateDocumentDto } from './dto/create-document.dto';
@@ -14,16 +12,13 @@ import { UpdateDocumentDto } from './dto/update-document.dto';
 import { QueryDocumentDto } from './dto/query-document.dto';
 import { UploadParseDto } from './dto/upload-parse.dto';
 import { DocumentEntity } from './entities/document.entity';
+import { DocumentContentEntity } from './entities/document-content.entity';
 import {
   canArchive,
   canEditContent,
   canPublishFrom,
   DocumentStatus,
 } from './document-status';
-import {
-  DocumentContent,
-  DocumentContentDocument,
-} from './schemas/document-content.schema';
 import { RustfsService } from '../storage/rustfs.service';
 import { DocumentPipelinePublisher } from '../mq/document-pipeline.publisher';
 import { FileParserService } from './parser/file-parser.service';
@@ -38,8 +33,7 @@ import { AuthUser } from '../auth/auth-user.interface';
 /**
  * 文档服务
  * - 元数据：PostgreSQL（kh_document）
- * - 正文：MongoDB（document_content）
- * - 关联：content_id ↔ Mongo _id，documentId ↔ 文档 id
+ * - 正文：PostgreSQL（kh_document_content，document_id 兼 PK/FK）
  */
 @Injectable()
 export class DocumentService {
@@ -49,9 +43,6 @@ export class DocumentService {
     /** Postgres 实体管理器 */
     @InjectEntityManager()
     private readonly em: EntityManager,
-    /** Mongo 正文模型 */
-    @InjectModel(DocumentContent.name)
-    private readonly contentModel: Model<DocumentContentDocument>,
     private readonly fileParserService: FileParserService,
     private readonly rustfs: RustfsService,
     private readonly pipelinePublisher: DocumentPipelinePublisher,
@@ -61,8 +52,8 @@ export class DocumentService {
 
   /**
    * 创建文档
-   * 流程：生成雪花 ID → 写 Mongo 正文（拿 ObjectId）→ 写 Postgres 元数据
-   * 若 Postgres 写入失败，回滚删除已写入的 Mongo 正文，避免脏数据
+   * 流程：生成雪花 ID → 单事务内先写父表 kh_document，再写正文表
+   * MQ 投递留在事务外（外部副作用不应进事务）
    */
   async create(dto: CreateDocumentDto, actor: AuthUser) {
     const requestedStatus = dto.status ?? DocumentStatus.Draft;
@@ -88,23 +79,11 @@ export class DocumentService {
     const contentSummary =
       dto.summary ?? this.buildContentSummary(dto.content);
 
-    // 先写 Mongo，_id 由驱动自动生成 ObjectId
-    const contentDoc = await this.contentModel.create({
-      documentId: id,
-      content: dto.content,
-      contentLength: dto.content.length,
-      contentSummary,
-      version: 1,
-      deleted: false,
-    });
-    // ObjectId 转字符串，存入 Postgres content_id
-    const contentId = String(contentDoc._id);
-
-    try {
-      const doc = this.em.create(DocumentEntity, {
+    const saved = await this.em.transaction(async (tx) => {
+      // 1. 先插父表（FK：child 依赖父行已存在）
+      const doc = tx.create(DocumentEntity, {
         id,
         title: dto.title,
-        contentId,
         summary: dto.summary,
         categoryId: dto.categoryId,
         teamId: dto.teamId,
@@ -121,21 +100,30 @@ export class DocumentService {
         updateBy: actor.userId,
         deleted: false,
       });
+      const savedDoc = await tx.save(doc);
 
-      const saved = await this.em.save(doc);
+      // 2. 再插正文子表
+      await tx.save(
+        tx.create(DocumentContentEntity, {
+          documentId: id,
+          content: dto.content,
+          contentLength: dto.content.length,
+          contentSummary,
+          version: 1,
+          deleted: false,
+        }),
+      );
 
-      // 仅 Published 才建索引。需审时创建即 Published 已在上方拒绝，
-      // 能走到这里的 Published 一定是免审；草稿不投 MQ。
-      if (status === DocumentStatus.Published) {
-        await this.safePublish(saved);
-      }
+      return savedDoc;
+    });
 
-      return { ...saved, content: dto.content };
-    } catch (error) {
-      // Postgres 失败：物理删除刚写入的 Mongo 正文
-      await this.contentModel.deleteOne({ _id: contentDoc._id });
-      throw error;
+    // 仅 Published 才建索引。需审时创建即 Published 已在上方拒绝，
+    // 能走到这里的 Published 一定是免审；草稿不投 MQ。
+    if (status === DocumentStatus.Published) {
+      await this.safePublish(saved);
     }
+
+    return { ...saved, content: dto.content };
   }
 
   /**
@@ -187,7 +175,7 @@ export class DocumentService {
 
   /**
    * 查询文档详情
-   * @param withContent 是否附带 Mongo 正文，默认 true
+   * @param withContent 是否附带正文，默认 true
    */
   async findOne(id: string, withContent = true) {
     const doc = await this.em.findOne(DocumentEntity, {
@@ -201,10 +189,9 @@ export class DocumentService {
       return doc;
     }
 
-    // 通过 content_id 拉取未删除的正文
-    const contentDoc = await this.contentModel
-      .findOne({ _id: doc.contentId, deleted: false })
-      .lean();
+    const contentDoc = await this.em.findOne(DocumentContentEntity, {
+      where: { documentId: doc.id, deleted: false },
+    });
     return {
       ...doc,
       content: contentDoc?.content ?? '',
@@ -213,9 +200,9 @@ export class DocumentService {
 
   /**
    * 更新文档
-   * - 有 content：同步更新 Mongo 正文，并递增 version
-   * - 仅改 summary：同步更新 Mongo contentSummary
-   * - 其余字段只更新 Postgres 元数据
+   * - 有 content：同步更新正文，并递增 version
+   * - 仅改 summary：同步更新正文侧 contentSummary
+   * - 其余字段只更新元数据
    */
   async update(id: string, dto: UpdateDocumentDto, actor: AuthUser) {
     const doc = await this.em.findOne(DocumentEntity, {
@@ -259,29 +246,29 @@ export class DocumentService {
       newContent = dto.content;
       const contentSummary =
         dto.summary ?? this.buildContentSummary(dto.content);
-      const result = await this.contentModel.updateOne(
-        { _id: doc.contentId, deleted: false },
-        {
-          $set: {
-            content: dto.content,
-            contentLength: dto.content.length,
-            contentSummary,
-          },
-          $inc: { version: 1 }, // 版本号 +1
-        },
-      );
-      if (result.matchedCount === 0) {
+      const contentDoc = await this.em.findOne(DocumentContentEntity, {
+        where: { documentId: doc.id, deleted: false },
+      });
+      if (!contentDoc) {
         throw new BadRequestException(
-          `Document content ${doc.contentId} not found`,
+          `Document content ${doc.id} not found`,
         );
       }
+      contentDoc.content = dto.content;
+      contentDoc.contentLength = dto.content.length;
+      contentDoc.contentSummary = contentSummary;
+      contentDoc.version += 1;
+      await this.em.save(contentDoc);
       doc.wordCount = this.countWords(dto.content);
     } else if (dto.summary !== undefined) {
-      // 只改摘要时，同步 Mongo 侧预览字段
-      await this.contentModel.updateOne(
-        { _id: doc.contentId, deleted: false },
-        { $set: { contentSummary: dto.summary } },
-      );
+      // 只改摘要时，同步正文侧预览字段
+      const contentDoc = await this.em.findOne(DocumentContentEntity, {
+        where: { documentId: doc.id, deleted: false },
+      });
+      if (contentDoc) {
+        contentDoc.contentSummary = dto.summary;
+        await this.em.save(contentDoc);
+      }
     }
 
     // —— 元数据字段（有传才覆盖）——
@@ -296,7 +283,7 @@ export class DocumentService {
     doc.updateBy = actor.userId;
 
     const saved = await this.em.save(doc);
-    const finalContent = newContent ?? (await this.loadContent(doc.contentId));
+    const finalContent = newContent ?? (await this.loadContent(doc.id));
 
     // 已发布文档改内容/下架时，同步 RAG/Search/KG（需审核模式下已发布改稿不立即重建索引）
     await this.syncPipelineAfterUpdate(
@@ -339,7 +326,7 @@ export class DocumentService {
         doc.status === DocumentStatus.Published
       ) {
         const saved = await this.reviewService.submitForReview(id, actor);
-        const content = await this.loadContent(saved.contentId);
+        const content = await this.loadContent(saved.id);
         return { ...saved, content };
       }
     }
@@ -372,7 +359,7 @@ export class DocumentService {
     doc.publishTime = new Date();
     if (actor?.userId) doc.updateBy = actor.userId;
     const saved = await this.em.save(doc);
-    const content = await this.loadContent(saved.contentId);
+    const content = await this.loadContent(saved.id);
     await this.safePublish(saved);
 
     this.logger.log(`文档发布成功：documentId=${id}`);
@@ -423,7 +410,7 @@ export class DocumentService {
 
   /**
    * 软删除文档
-   * Postgres、Mongo 两侧都将 deleted 置为 true（不物理删正文），
+   * 元数据与正文两侧都将 deleted 置为 true（不物理删正文），
    * 已发布文档会异步清理 ES 搜索索引、向量块与 Neo4j 图谱。
    */
   async remove(id: string, actor: AuthUser) {
@@ -442,10 +429,14 @@ export class DocumentService {
     doc.deleted = true;
     doc.updateBy = actor.userId;
     await this.em.save(doc);
-    await this.contentModel.updateOne(
-      { _id: doc.contentId },
-      { $set: { deleted: true } },
-    );
+
+    const contentDoc = await this.em.findOne(DocumentContentEntity, {
+      where: { documentId: doc.id },
+    });
+    if (contentDoc) {
+      contentDoc.deleted = true;
+      await this.em.save(contentDoc);
+    }
 
     return { id, deleted: true };
   }
@@ -565,11 +556,11 @@ export class DocumentService {
     }
   }
 
-  /** 从 Mongo 读取正文（详情 / 发布响应） */
-  private async loadContent(contentId: string): Promise<string> {
-    const contentDoc = await this.contentModel
-      .findOne({ _id: contentId, deleted: false })
-      .lean();
+  /** 从正文表读取正文（详情 / 发布响应） */
+  private async loadContent(documentId: string): Promise<string> {
+    const contentDoc = await this.em.findOne(DocumentContentEntity, {
+      where: { documentId, deleted: false },
+    });
     return contentDoc?.content ?? '';
   }
 

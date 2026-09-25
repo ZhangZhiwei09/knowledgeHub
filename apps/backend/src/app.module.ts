@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MongooseModule } from '@nestjs/mongoose';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DocumentModule } from './document/document.module';
 import { DocumentEntity } from './document/entities/document.entity';
+import { DocumentContentEntity } from './document/entities/document-content.entity';
 import { DocumentReviewEntity } from './document/entities/document-review.entity';
 import { AuthModule } from './auth/auth.module';
 import { UserEntity } from './user/entities/user.entity';
@@ -63,6 +63,7 @@ import { AiMessageEntity } from './ai/entities/ai-message.entity';
         database: config.get<string>('POSTGRES_DB', 'knowledge_hub'),
         entities: [
           DocumentEntity,
+          DocumentContentEntity,
           DocumentReviewEntity,
           UserEntity,
           RoleEntity,
@@ -76,15 +77,6 @@ import { AiMessageEntity } from './ai/entities/ai-message.entity';
           AiMessageEntity,
         ],
         synchronize: false,
-      }),
-    }),
-    MongooseModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        uri: config.get<string>(
-          'MONGO_URI',
-          'mongodb://mongo_user:mongo_pass123@localhost:27017/knowledge_hub?authSource=admin',
-        ),
       }),
     }),
     DocumentModule,

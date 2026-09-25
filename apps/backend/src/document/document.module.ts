@@ -1,12 +1,7 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { DocumentService } from './document.service';
 import { DocumentReviewService } from './document-review.service';
 import { DocumentController } from './document.controller';
-import {
-  DocumentContent,
-  DocumentContentSchema,
-} from './schemas/document-content.schema';
 import { FileParserService } from './parser/file-parser.service';
 
 /**
@@ -15,11 +10,6 @@ import { FileParserService } from './parser/file-parser.service';
  * - DocumentReviewService：发布审核（提交 / 通过 / 驳回）
  */
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: DocumentContent.name, schema: DocumentContentSchema },
-    ]),
-  ],
   controllers: [DocumentController],
   providers: [DocumentService, DocumentReviewService, FileParserService],
   exports: [DocumentService, DocumentReviewService, FileParserService],

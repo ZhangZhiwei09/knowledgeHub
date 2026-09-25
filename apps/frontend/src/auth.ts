@@ -1,3 +1,6 @@
+/**
+ * 登录态：token / 用户信息存 localStorage，并提供 useAuth 订阅。
+ */
 import { useSyncExternalStore } from 'react'
 import type { AuthUser } from './types'
 

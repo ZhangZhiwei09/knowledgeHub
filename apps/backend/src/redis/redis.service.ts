@@ -2,6 +2,10 @@ import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 
+/**
+ * Redis 客户端封装：get/set/del/ttl。
+ * 供验证码、激活 token 等短时状态使用。
+ */
 @Injectable()
 export class RedisService implements OnModuleDestroy {
   private readonly client: Redis;

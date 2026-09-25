@@ -6,6 +6,9 @@ import { UserEntity } from '../user/entities/user.entity';
 import { TeamService } from './team.service';
 import { TeamController } from './team.controller';
 
+/**
+ * 团队模块：团队与成员 CRUD。
+ */
 @Module({
   imports: [
     TypeOrmModule.forFeature([TeamEntity, TeamMemberEntity, UserEntity]),

@@ -13,6 +13,7 @@ import { useAuth } from '../auth'
 import { DOC_STATUS, can, formatTime, visibilityMeta } from '../utils'
 import { FileTypeIcon } from '../components/FileTypeIcon'
 
+/** 工作台首页：个人统计与近期文档快捷入口 */
 export default function DashboardPage() {
   const user = useAuth()
   const navigate = useNavigate()

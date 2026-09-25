@@ -1,3 +1,6 @@
+/**
+ * 各业务域 API 方法集合（auth / document / search / ai / graph / 管理端等）。
+ */
 import { del, get, patch, post, put, request } from './client'
 import type {
   ChatMessage,

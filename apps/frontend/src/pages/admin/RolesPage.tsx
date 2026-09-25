@@ -12,6 +12,7 @@ function toTree(nodes: PermissionNode[]): { title: string; key: string; children
   }))
 }
 
+/** 管理端：角色维护与权限树勾选 */
 export default function RolesPage() {
   const [items, setItems] = useState<RoleItem[]>([])
   const [tree, setTree] = useState<PermissionNode[]>([])

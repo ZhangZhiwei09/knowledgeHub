@@ -29,6 +29,7 @@ function Perm({ code, children }: { code: string; children: ReactNode }) {
   return children
 }
 
+/** 路由与鉴权门禁：登录守卫、按权限挂载各业务页 */
 export default function App() {
   const user = useAuth()
   return (

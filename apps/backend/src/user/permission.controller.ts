@@ -19,6 +19,10 @@ import { RequirePermission } from '../auth/decorators/require-permission.decorat
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RoleCode } from '../common/constants/roles';
 
+/**
+ * 权限管理接口：权限树 / 分页 / CRUD。
+ * 仅 ROLE_ADMIN；权限码 system:permission。
+ */
 @Controller('permissions')
 @Roles(RoleCode.ADMIN)
 export class PermissionController {

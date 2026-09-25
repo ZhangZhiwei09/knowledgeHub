@@ -7,6 +7,7 @@ import type { DocumentItem, TeamItem } from '../types'
 import { useAuth } from '../auth'
 import { canWriteDocument, flattenTeams, isAdmin } from '../utils'
 
+/** 文档新建/编辑表单：标题、正文、可见性与团队范围 */
 export default function DocumentEditPage() {
   const { id } = useParams()
   const isNew = !id

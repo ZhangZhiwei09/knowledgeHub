@@ -1,3 +1,6 @@
+/**
+ * 前端 API 请求封装：统一 fetch、Bearer 注入、401 时 JWT refresh，失败抛 ApiError。
+ */
 import { clearAuth, getAccessToken, getRefreshToken, setAuth } from '../auth'
 import type { AuthUser } from '../types'
 

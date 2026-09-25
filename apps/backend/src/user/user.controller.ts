@@ -23,6 +23,10 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { RoleCode } from '../common/constants/roles';
 import type { AuthUser } from '../auth/auth-user.interface';
 
+/**
+ * 用户接口：个人资料 + 管理员用户 CRUD / 角色与权限分配。
+ * 不含登录注册（见 AuthController）。
+ */
 @Controller('users')
 export class UserController {
   constructor(

@@ -28,6 +28,7 @@ const { Header, Sider, Content } = Layout
 
 type MenuItem = NonNullable<MenuProps['items']>[number]
 
+/** 主壳布局：侧栏菜单、顶栏用户区，子路由经 Outlet 渲染 */
 export default function AppLayout() {
   const user = useAuth()
   const navigate = useNavigate()

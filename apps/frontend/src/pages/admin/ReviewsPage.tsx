@@ -6,6 +6,7 @@ import { ApiError } from '../../api/client'
 import type { ReviewTask } from '../../types'
 import { formatTime } from '../../utils'
 
+/** 管理端：文档审核队列（通过/驳回） */
 export default function ReviewsPage() {
   const [status, setStatus] = useState<'pending' | 'approved' | 'rejected'>('pending')
   const [items, setItems] = useState<ReviewTask[]>([])

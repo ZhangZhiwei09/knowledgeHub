@@ -12,6 +12,7 @@ import type { SearchHit } from '../types'
 import { DOC_STATUS, formatTime, safeHighlight, visibilityMeta } from '../utils'
 import { FileTypeIcon } from '../components/FileTypeIcon'
 
+/** 知识库全文检索：关键词、筛选与高亮结果列表 */
 export default function SearchPage() {
   const navigate = useNavigate()
   const [keyword, setKeyword] = useState('')

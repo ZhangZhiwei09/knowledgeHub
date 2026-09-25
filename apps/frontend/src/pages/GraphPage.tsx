@@ -33,6 +33,7 @@ const emptyOverview: GraphOverview = {
   entityTypes: [],
 }
 
+/** 知识图谱总览：力导向图、实体筛选与节点详情 */
 export default function GraphPage() {
   const navigate = useNavigate()
   const [keyword, setKeyword] = useState('')

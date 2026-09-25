@@ -28,6 +28,10 @@ interface TokenPayload {
   type: 'access' | 'refresh';
 }
 
+/**
+ * 认证业务：注册登录、JWT 签发/刷新、邮箱激活与密码重置编排。
+ * 用户数据走 UserService；邮件走 Email* / PasswordReset 服务。
+ */
 @Injectable()
 export class AuthService {
   constructor(

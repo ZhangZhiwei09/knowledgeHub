@@ -22,6 +22,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateProfileDto } from './dto/profile.dto';
 import { UserVO } from './vo/user.vo';
 
+/**
+ * 用户领域服务：账号 CRUD、角色绑定、资料与密码、鉴权用用户信息。
+ * 权限明细由 PermissionService 解析。
+ */
 @Injectable()
 export class UserService {
   constructor(

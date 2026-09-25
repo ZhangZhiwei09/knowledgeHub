@@ -1,3 +1,6 @@
+/**
+ * 对话消息 UI：意图/工具过程条、正文 Markdown 与引用卡片数据转换。
+ */
 import { useMemo, useState, type ReactNode } from 'react'
 import { getToolName, isToolUIPart } from 'ai'
 import type { UIMessage } from 'ai'

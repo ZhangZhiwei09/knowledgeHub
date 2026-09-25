@@ -15,6 +15,10 @@ import { RolesGuard } from './roles.guard';
 import { PermissionsGuard } from './permissions.guard';
 import { UserModule } from '../user/user.module';
 
+/**
+ * 认证模块：JWT + Passport、全局鉴权 Guard、邮件相关服务。
+ * 导出 AuthService / UserModule 供他处注入。
+ */
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),

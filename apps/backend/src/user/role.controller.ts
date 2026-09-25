@@ -15,6 +15,10 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { RequirePermission } from '../auth/decorators/require-permission.decorator';
 import { RoleCode } from '../common/constants/roles';
 
+/**
+ * 角色管理接口：角色 CRUD 与角色权限绑定。
+ * 仅 ROLE_ADMIN。
+ */
 @Controller('roles')
 @Roles(RoleCode.ADMIN)
 export class RoleController {

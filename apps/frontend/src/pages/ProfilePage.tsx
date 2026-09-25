@@ -5,6 +5,7 @@ import { ApiError } from '../api/client'
 import type { TeamItem, UserStats } from '../types'
 import { updateUser, useAuth } from '../auth'
 
+/** 个人中心：资料、密码、所属团队与使用统计 */
 export default function ProfilePage() {
   const user = useAuth()
   const [stats, setStats] = useState<UserStats | null>(null)

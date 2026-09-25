@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailerService } from '@nestjs-modules/mailer';
 
+/**
+ * 邮件发送封装：激活链接、找回密码验证码。
+ * 不负责 token/code 生成与校验。
+ */
 @Injectable()
 export class EmailService {
   constructor(

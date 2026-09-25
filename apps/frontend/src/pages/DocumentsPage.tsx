@@ -8,6 +8,7 @@ import { useAuth } from '../auth'
 import { DOC_STATUS, can, canWriteDocument, formatTime, visibilityMeta } from '../utils'
 import { FileTypeIcon, fileTypeLabel } from '../components/FileTypeIcon'
 
+/** 文档列表：筛选、上传、进入详情/编辑 */
 export default function DocumentsPage() {
   const user = useAuth()
   const navigate = useNavigate()

@@ -10,6 +10,7 @@ import { useAuth } from '../auth'
 import { DOC_STATUS, can, canWriteDocument, formatTime, visibilityMeta } from '../utils'
 import { FileTypeIcon } from '../components/FileTypeIcon'
 
+/** 文档详情：Markdown 正文、状态与删除/编辑入口 */
 export default function DocumentDetailPage() {
   const { id = '' } = useParams()
   const navigate = useNavigate()

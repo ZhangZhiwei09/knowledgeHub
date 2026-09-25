@@ -28,6 +28,9 @@ import { GraphModule } from './graph/graph.module';
 import { AiSessionEntity } from './ai/entities/ai-session.entity';
 import { AiMessageEntity } from './ai/entities/ai-message.entity';
 
+/**
+ * 根模块：配置、PG、邮件、Redis/MQ/存储与各业务子模块组装。
+ */
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),

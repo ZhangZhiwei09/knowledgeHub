@@ -1,6 +1,6 @@
 # Project Knowledge
 
-跨任务可复用的稳定项目事实。Feature Spec 细节仍在 `mydocs/specs/`。
+跨任务可复用的稳定项目事实。Feature Spec 细节仍在 `mydocs/specs/`。Agent 入口见仓库根目录 `AGENTS.md`。
 
 ## 存储拓扑（2026-09-25 起）
 

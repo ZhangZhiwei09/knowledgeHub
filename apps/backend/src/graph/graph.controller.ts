@@ -8,6 +8,10 @@ import {
 import { RequirePermission } from '../auth/decorators/require-permission.decorator';
 import { PermissionCode } from '../common/constants/permissions';
 
+/**
+ * 知识图谱查询接口：全景 / 搜索 / 节点 / 边。
+ * 只读；建图由管线 MQ 消费完成，此处委托 GraphBuildService。
+ */
 @Controller('graph')
 @RequirePermission(PermissionCode.search)
 export class GraphController {

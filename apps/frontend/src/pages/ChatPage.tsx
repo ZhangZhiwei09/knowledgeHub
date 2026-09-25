@@ -18,6 +18,7 @@ import { formatTime } from '../utils'
 
 const CHAT_ID = 'kh-chat' // useChat 会话键，切页面时复用同一条流
 
+/** AI 问答页：会话列表、流式对话与引用展示 */
 export default function ChatPage() {
   const navigate = useNavigate()
   const { modal } = App.useApp()

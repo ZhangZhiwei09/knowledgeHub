@@ -11,6 +11,7 @@ interface MemberRow {
   memberRole?: string
 }
 
+/** 管理端：团队 CRUD 与成员管理 */
 export default function TeamsPage() {
   const [items, setItems] = useState<TeamItem[]>([])
   const [total, setTotal] = useState(0)

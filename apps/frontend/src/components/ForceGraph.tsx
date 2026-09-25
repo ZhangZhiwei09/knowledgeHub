@@ -208,6 +208,7 @@ function buildOption(
   }
 }
 
+/** ECharts 力导向知识图谱；同文件含实体类型饼图 */
 export default function ForceGraph({ nodes, edges, onNodeClick, chartRef }: Props) {
   const elRef = useRef<HTMLDivElement>(null)
   const chartInnerRef = useRef<ECharts | null>(null)

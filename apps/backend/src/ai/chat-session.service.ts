@@ -16,6 +16,10 @@ import {
 
 const DEFAULT_TITLE = '新对话';
 
+/**
+ * AI 会话与消息持久化（kh_ai_session / kh_ai_message）。
+ * 仅当前用户可见；不含检索与 LLM 调用。
+ */
 @Injectable()
 export class ChatSessionService {
   constructor(

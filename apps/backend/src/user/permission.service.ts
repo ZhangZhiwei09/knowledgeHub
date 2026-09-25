@@ -23,6 +23,10 @@ import {
   UpdatePermissionDto,
 } from './dto/permission.dto';
 
+/**
+ * 权限服务：权限树/CRUD、角色与用户权限绑定、有效权限解析。
+ * 管理员角色走常量短路，不查库拼装。
+ */
 @Injectable()
 export class PermissionService {
   constructor(

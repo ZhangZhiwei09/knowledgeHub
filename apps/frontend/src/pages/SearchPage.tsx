@@ -54,6 +54,7 @@ export default function SearchPage() {
 
   return (
     <div className="kh-page">
+      <h2 className="kh-page-title">文档搜索</h2>
       <p className="kh-access-hint">
         只会检索你有权限的已发布文档：公开、所在团队，以及自己写的。
       </p>
@@ -61,7 +62,7 @@ export default function SearchPage() {
         <Input
           size="large"
           allowClear
-          prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
+          prefix={<SearchOutlined style={{ color: 'var(--kh-text-quaternary)' }} />}
           placeholder="输入关键词，检索你有权限的文档"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}

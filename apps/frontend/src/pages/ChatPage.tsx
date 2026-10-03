@@ -4,7 +4,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport } from 'ai'
 import { DeleteOutlined, DownOutlined, PlusOutlined } from '@ant-design/icons'
-import { App, Button, Empty, Input, Space, Typography, message } from 'antd'
+import { App, Button, Input, Space, message } from 'antd'
+import { EmptyState } from '../components/states'
 import { aiApi } from '../api'
 import { ApiError } from '../api/client'
 import { getAccessToken } from '../auth'
@@ -58,7 +59,8 @@ export default function ChatPage() {
     transport,
     onData: (part) => {
       if (part.type !== 'data-session') return
-      const nextId = part.data.sessionId
+      // useChat 的 data part 是 unknown，这里按后端约定的 session 载荷收窄
+      const nextId = (part.data as { sessionId?: string } | undefined)?.sessionId
       if (!nextId || nextId === sessionIdRef.current) return
       loadedSessionRef.current = nextId
       navigate(`/chat?session=${nextId}`, { replace: true })
@@ -266,7 +268,7 @@ export default function ChatPage() {
         </Button>
         <div className="kh-chat-session-list">
           {sessions.length === 0 ? (
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="还没有会话" />
+            <EmptyState description="还没有会话" />
           ) : (
             sessions.map((s) => (
               <div
@@ -285,12 +287,10 @@ export default function ChatPage() {
         </div>
       </aside>
       <div className="kh-chat-main">
-        <Typography.Title level={4} style={{ marginTop: 0 }}>
-          知识问答
-        </Typography.Title>
-        <Typography.Paragraph type="secondary">
+        <h2 className="kh-page-title" style={{ marginBottom: 8 }}>知识问答</h2>
+        <p className="kh-access-hint" style={{ marginBottom: 12 }}>
           只会检索你有权限的文档（公开、所在团队、自己写的）。先识别意图，再按需检索知识库、图谱或联网；资料不切题时由助手改写问题再查。
-        </Typography.Paragraph>
+        </p>
         <div className="kh-chat-log-wrap">
           <div
             className="kh-chat-log"
@@ -301,7 +301,7 @@ export default function ChatPage() {
             onTouchMove={onLogTouchMove}
           >
             {messages.length === 0 ? (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="输入问题开始一段对话" />
+              <EmptyState description="输入问题开始一段对话" />
             ) : (
               messages.map((m, i) => {
                 const liveAssistant =

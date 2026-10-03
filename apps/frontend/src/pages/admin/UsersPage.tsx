@@ -45,6 +45,7 @@ export default function UsersPage() {
 
   return (
     <div className="kh-page">
+      <h2 className="kh-page-title">用户管理</h2>
       <Space style={{ marginBottom: 16 }}>
         <Input
           placeholder="用户名 / 姓名 / 邮箱"

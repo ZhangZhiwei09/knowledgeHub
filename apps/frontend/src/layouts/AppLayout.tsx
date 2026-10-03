@@ -16,7 +16,7 @@ import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Avatar, Badge, Dropdown, Layout, Menu, Tag, theme } from 'antd'
+import { Avatar, Badge, Dropdown, Layout, Menu, Tag } from 'antd'
 import type { MenuProps } from 'antd'
 import { authApi, teamApi } from '../api'
 import { clearAuth, updateUser, useAuth } from '../auth'
@@ -28,16 +28,13 @@ const { Header, Sider, Content } = Layout
 
 type MenuItem = NonNullable<MenuProps['items']>[number]
 
-/** 主壳布局：侧栏菜单、顶栏用户区，子路由经 Outlet 渲染 */
+/** 主壳布局：顶栏一级导航 + 可折叠侧栏（当二级 ≤1 时自动隐藏） */
 export default function AppLayout() {
   const user = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [collapsed, setCollapsed] = useState(false)
   const [myTeams, setMyTeams] = useState<TeamItem[]>([])
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken()
 
   useEffect(() => {
     authApi.me().then(updateUser).catch(() => undefined)
@@ -130,9 +127,30 @@ export default function AppLayout() {
     }
   }, [topKey, user])
 
+  /** 二级 ≤1 时隐藏侧栏，用面包屑代替 */
+  const hideSider = side.items.length <= 1
+
+  const breadcrumb = useMemo(() => {
+    if (!hideSider) return null
+    const current = side.items.find((i) =>
+      (i as { key?: string })?.key === location.pathname,
+    ) as { label?: string } | undefined
+    return (
+      <div className="kh-crumb">
+        <span className="kh-crumb-top">{side.title}</span>
+        {current?.label ? (
+          <>
+            <span className="kh-crumb-sep">/</span>
+            <span>{current.label}</span>
+          </>
+        ) : null}
+      </div>
+    )
+  }, [hideSider, side, location.pathname])
+
   return (
     <Layout className="kh-root">
-      <Header className="kh-header" style={{ background: colorBgContainer }}>
+      <Header className="kh-header">
         <div className="kh-logo" onClick={() => navigate('/dashboard')}>
           <BrandLogo />
           <span className="kh-logo-text">Knowledge Hub</span>
@@ -187,28 +205,31 @@ export default function AppLayout() {
         </div>
       </Header>
       <Layout>
-        <Sider
-          className="kh-sider"
-          theme="light"
-          width={220}
-          collapsedWidth={64}
-          collapsible
-          collapsed={collapsed}
-          trigger={null}
-        >
-          {!collapsed ? <div className="kh-sider-title">{side.title}</div> : null}
-          <Menu
-            mode="inline"
-            selectedKeys={[location.pathname]}
-            items={side.items}
-            onClick={({ key }) => navigate(key)}
-          />
-          <div className="kh-sider-bottom" onClick={() => setCollapsed((v) => !v)}>
-            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            {!collapsed ? <span>收起菜单</span> : null}
-          </div>
-        </Sider>
+        {!hideSider ? (
+          <Sider
+            className="kh-sider"
+            theme="light"
+            width={180}
+            collapsedWidth={56}
+            collapsible
+            collapsed={collapsed}
+            trigger={null}
+          >
+            {!collapsed ? <div className="kh-sider-title">{side.title}</div> : null}
+            <Menu
+              mode="inline"
+              selectedKeys={[location.pathname]}
+              items={side.items}
+              onClick={({ key }) => navigate(key)}
+            />
+            <div className="kh-sider-bottom" onClick={() => setCollapsed((v) => !v)}>
+              {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              {!collapsed ? <span>收起菜单</span> : null}
+            </div>
+          </Sider>
+        ) : null}
         <Content className="kh-content">
+          {breadcrumb}
           <Outlet />
         </Content>
       </Layout>

@@ -36,6 +36,7 @@ export default function RolesPage() {
 
   return (
     <div className="kh-page">
+      <h2 className="kh-page-title">角色权限</h2>
       <Button type="primary" style={{ marginBottom: 16 }} onClick={() => setCreateOpen(true)}>
         新建角色
       </Button>

@@ -87,6 +87,7 @@ export default function TeamsPage() {
 
   return (
     <div className="kh-page">
+      <h2 className="kh-page-title">团队管理</h2>
       <Space style={{ marginBottom: 16 }}>
         <Input
           placeholder="团队名称"
@@ -227,7 +228,7 @@ export default function TeamsPage() {
                     }
                   }}
                 >
-                  <a style={{ color: '#ff4d4f' }}>踢出</a>
+                  <a style={{ color: 'var(--kh-error)' }}>踢出</a>
                 </Popconfirm>
               ),
             },

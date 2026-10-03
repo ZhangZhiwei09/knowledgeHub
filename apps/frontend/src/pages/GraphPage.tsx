@@ -8,12 +8,14 @@ import {
   ReloadOutlined,
   SearchOutlined,
 } from '@ant-design/icons'
-import { Button, DatePicker, Empty, Input, Select, Space, Spin, message } from 'antd'
+import { Button, DatePicker, Input, Select, Space, Spin, message } from 'antd'
+import { EmptyState, LoadingSkeleton } from '../components/states'
 import { graphApi } from '../api'
 import { ApiError } from '../api/client'
 import ForceGraph, { EntityTypePie, type GraphChartHandle } from '../components/ForceGraph'
 import type { GraphOverview, GraphViewNode } from '../types'
 import { formatTime } from '../utils'
+import { KH_COLORS } from '../theme/tokens'
 
 const emptyOverview: GraphOverview = {
   nodes: [],
@@ -82,7 +84,7 @@ export default function GraphPage() {
         <div className="kh-graph-toolbar">
           <Input
             allowClear
-            prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
+            prefix={<SearchOutlined style={{ color: 'var(--kh-text-quaternary)' }} />}
             placeholder="输入关键词检索你有权限的图谱…"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
@@ -127,7 +129,7 @@ export default function GraphPage() {
           <Button type="primary" loading={loading} onClick={() => void load()}>
             检索
           </Button>
-          <div style={{ flex: 1, color: '#8c8c8c', fontSize: 12 }}>
+          <div style={{ flex: 1, color: 'var(--kh-text-tertiary)', fontSize: 12 }}>
             仅展示你有权限的文档及其实体
           </div>
           <Button icon={<DownloadOutlined />} onClick={() => chartRef.current?.exportPng()}>
@@ -145,9 +147,9 @@ export default function GraphPage() {
           ) : (
             <div className="kh-graph-empty">
               {loading ? (
-                <Spin />
+                <LoadingSkeleton rows={3} />
               ) : (
-                <Empty description="暂无你有权限的图谱数据。发布文档后会写入 Neo4j。" />
+                <EmptyState description="暂无你有权限的图谱数据。发布文档后会写入 Neo4j。" />
               )}
             </div>
           )}
@@ -157,20 +159,21 @@ export default function GraphPage() {
             </div>
           ) : null}
           <div className="kh-graph-legend">
+            {/* 图例色与 ForceGraph 的 echarts 分类色同源，改 tokens.ts 即同步 */}
             <span>
-              <i style={{ background: '#1677ff' }} /> 文档
+              <i style={{ background: KH_COLORS.graph.document }} /> 文档
             </span>
             <span>
-              <i style={{ background: '#52c41a' }} /> 知识点
+              <i style={{ background: KH_COLORS.graph.point }} /> 知识点
             </span>
             <span>
-              <i style={{ background: '#fa8c16' }} /> 人物
+              <i style={{ background: KH_COLORS.graph.person }} /> 人物
             </span>
             <span>
-              <i style={{ background: '#13c2c2' }} /> 组织
+              <i style={{ background: KH_COLORS.graph.organization }} /> 组织
             </span>
             <span>
-              <i style={{ background: '#722ed1' }} /> 标签
+              <i style={{ background: KH_COLORS.graph.tag }} /> 标签
             </span>
             <span>
               <span className="kh-legend-line kh-legend-blue" /> 提及
@@ -226,7 +229,7 @@ export default function GraphPage() {
           {data.stats.entityTypes.length ? (
             <EntityTypePie items={data.stats.entityTypes} />
           ) : (
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无" />
+            <EmptyState description="暂无" />
           )}
         </div>
         <div className="kh-graph-card">
@@ -242,7 +245,7 @@ export default function GraphPage() {
               ))}
             </ol>
           ) : (
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无" />
+            <EmptyState description="暂无" />
           )}
         </div>
         <div className="kh-graph-card">
@@ -259,7 +262,7 @@ export default function GraphPage() {
             <h4>当前节点</h4>
             <Space direction="vertical" size={4}>
               <div>{selected.name}</div>
-              <div style={{ color: '#8c8c8c', fontSize: 12 }}>
+              <div style={{ color: 'var(--kh-text-tertiary)', fontSize: 12 }}>
                 {selected.kind === 'document'
                   ? '文档'
                   : selected.kind === 'tag'

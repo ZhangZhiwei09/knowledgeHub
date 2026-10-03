@@ -2,6 +2,7 @@ import { useEffect, useRef, type RefObject } from 'react'
 import * as echarts from 'echarts'
 import type { ECharts, EChartsOption } from 'echarts'
 import type { GraphViewEdge, GraphViewNode } from '../types'
+import { KH_COLORS } from '../theme/tokens'
 
 export interface GraphChartHandle {
   zoomIn: () => void
@@ -17,12 +18,13 @@ interface Props {
   chartRef?: RefObject<GraphChartHandle | null>
 }
 
+/** 图谱分类色取自设计基线，与 GraphPage 图例、index.css 的 --kh-graph-* 同源 */
 const CATEGORIES = [
-  { name: '文档', itemStyle: { color: '#1677ff' } },
-  { name: '知识点', itemStyle: { color: '#52c41a' } },
-  { name: '人物', itemStyle: { color: '#fa8c16' } },
-  { name: '组织', itemStyle: { color: '#13c2c2' } },
-  { name: '标签', itemStyle: { color: '#722ed1' } },
+  { name: '文档', itemStyle: { color: KH_COLORS.graph.document } },
+  { name: '知识点', itemStyle: { color: KH_COLORS.graph.point } },
+  { name: '人物', itemStyle: { color: KH_COLORS.graph.person } },
+  { name: '组织', itemStyle: { color: KH_COLORS.graph.organization } },
+  { name: '标签', itemStyle: { color: KH_COLORS.graph.tag } },
 ] as const
 
 function categoryIndex(node: GraphViewNode) {
@@ -57,12 +59,30 @@ function kindLabel(node: GraphViewNode) {
 
 function edgeLineStyle(kind: GraphViewEdge['kind']) {
   if (kind === 'mentions') {
-    return { color: '#1677ff', width: 1.8, type: 'solid' as const, curveness: 0.24, opacity: 0.9 }
+    return {
+      color: KH_COLORS.graph.document,
+      width: 1.8,
+      type: 'solid' as const,
+      curveness: 0.24,
+      opacity: 0.9,
+    }
   }
   if (kind === 'related') {
-    return { color: '#8c8c8c', width: 1.3, type: 'dashed' as const, curveness: 0.28, opacity: 0.85 }
+    return {
+      color: KH_COLORS.textTertiary,
+      width: 1.3,
+      type: 'dashed' as const,
+      curveness: 0.28,
+      opacity: 0.85,
+    }
   }
-  return { color: '#722ed1', width: 1.3, type: 'dashed' as const, curveness: 0.2, opacity: 0.8 }
+  return {
+    color: KH_COLORS.graph.tag,
+    width: 1.3,
+    type: 'dashed' as const,
+    curveness: 0.2,
+    opacity: 0.8,
+  }
 }
 
 function changeZoom(chart: ECharts | null, factor: number) {
@@ -83,7 +103,7 @@ function bindHandle(chartRef: Props['chartRef'], chart: ECharts) {
       const url = chart.getDataURL({
         type: 'png',
         pixelRatio: 2,
-        backgroundColor: '#fafafa',
+        backgroundColor: KH_COLORS.bgSubtle,
       })
       const a = document.createElement('a')
       a.href = url
@@ -130,9 +150,9 @@ function buildOption(
         const node = nodes.find((n) => n.id === params.data?.id)
         if (!node) return params.data?.name ?? ''
         const desc = node.description
-          ? `<div style="color:#8c8c8c;margin-top:4px;max-width:280px;white-space:normal">${node.description}</div>`
+          ? `<div style="color:${KH_COLORS.textTertiary};margin-top:4px;max-width:280px;white-space:normal">${node.description}</div>`
           : ''
-        return `<div style="padding:4px 2px"><b>${node.name}</b><div style="color:#1677ff;margin-top:4px">${kindLabel(node)}</div>${desc}</div>`
+        return `<div style="padding:4px 2px"><b>${node.name}</b><div style="color:${KH_COLORS.graph.document};margin-top:4px">${kindLabel(node)}</div>${desc}</div>`
       },
     },
     series: [
@@ -158,7 +178,7 @@ function buildOption(
             show: true,
             position: 'bottom' as const,
             distance: 8,
-            color: '#434343',
+            color: KH_COLORS.textSecondary,
             fontSize: node.kind === 'document' ? (compact ? 13 : 12) : compact ? 12 : 11,
             fontWeight: node.kind === 'document' ? 600 : 400,
             formatter: () => shortName(node.name),
@@ -314,8 +334,8 @@ export function EntityTypePie({ items }: PieProps) {
           radius: ['42%', '68%'],
           center: ['50%', '50%'],
           avoidLabelOverlap: true,
-          itemStyle: { borderColor: '#fff', borderWidth: 2 },
-          label: { fontSize: 11, color: '#595959' },
+          itemStyle: { borderColor: KH_COLORS.bgContainer, borderWidth: 2 },
+          label: { fontSize: 11, color: KH_COLORS.textSecondary },
           data,
         },
       ],

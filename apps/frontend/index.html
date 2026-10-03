@@ -4,6 +4,15 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 只引西文字体 Geist（约 100KB 子集）。中文走系统 PingFang / 微软雅黑，
+         不引中文 Web 字体——思源黑单文件 5-15MB，企业内网不划算。
+         若内网无法访问 CDN，去掉这两行即可，字体会优雅降级到系统字体。 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <title>Knowledge Hub</title>
   </head>
   <body>

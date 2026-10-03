@@ -32,58 +32,75 @@ export default function DashboardPage() {
 
   return (
     <div>
+      <h2 className="kh-page-title">工作概览</h2>
       <Row gutter={16}>
         <Col span={6}>
-          <Card>
-            <Statistic title="我的文档" value={stats?.documentCount ?? 0} />
+          <Card className="kh-stat-card">
+            <Statistic
+              title="我的文档"
+              value={stats?.documentCount ?? 0}
+              valueStyle={{ color: 'var(--kh-primary-strong)', fontWeight: 700 }}
+            />
           </Card>
         </Col>
         <Col span={6}>
-          <Card>
-            <Statistic title="浏览合计" value={stats?.viewCount ?? 0} />
+          <Card className="kh-stat-card">
+            <Statistic
+              title="浏览合计"
+              value={stats?.viewCount ?? 0}
+              valueStyle={{ color: 'var(--kh-primary-strong)', fontWeight: 700 }}
+            />
           </Card>
         </Col>
         <Col span={6}>
-          <Card>
-            <Statistic title="点赞合计" value={stats?.likeCount ?? 0} />
+          <Card className="kh-stat-card">
+            <Statistic
+              title="点赞合计"
+              value={stats?.likeCount ?? 0}
+              valueStyle={{ color: 'var(--kh-primary-strong)', fontWeight: 700 }}
+            />
           </Card>
         </Col>
         <Col span={6}>
-          <Card>
-            <Statistic title="评论合计" value={stats?.commentCount ?? 0} />
+          <Card className="kh-stat-card">
+            <Statistic
+              title="评论合计"
+              value={stats?.commentCount ?? 0}
+              valueStyle={{ color: 'var(--kh-primary-strong)', fontWeight: 700 }}
+            />
           </Card>
         </Col>
       </Row>
       <Row gutter={16} style={{ marginTop: 16 }}>
         {can(user, 'document:list') ? (
           <Col span={6}>
-            <Card hoverable onClick={() => navigate('/documents')}>
-              <FileTextOutlined style={{ color: '#1677ff', fontSize: 20 }} /> 文档管理
+            <Card className="kh-quick-card" hoverable onClick={() => navigate('/documents')}>
+              <FileTextOutlined className="kh-quick-icon" /> 文档管理
             </Card>
           </Col>
         ) : null}
         {can(user, 'search') ? (
           <>
             <Col span={6}>
-              <Card hoverable onClick={() => navigate('/search')}>
-                <SearchOutlined style={{ color: '#1677ff', fontSize: 20 }} /> 文档搜索
+              <Card className="kh-quick-card" hoverable onClick={() => navigate('/search')}>
+                <SearchOutlined className="kh-quick-icon" /> 文档搜索
               </Card>
             </Col>
             <Col span={6}>
-              <Card hoverable onClick={() => navigate('/chat')}>
-                <MessageOutlined style={{ color: '#1677ff', fontSize: 20 }} /> AI 问答
+              <Card className="kh-quick-card" hoverable onClick={() => navigate('/chat')}>
+                <MessageOutlined className="kh-quick-icon" /> AI 问答
               </Card>
             </Col>
             <Col span={6}>
-              <Card hoverable onClick={() => navigate('/graph')}>
-                <ClusterOutlined style={{ color: '#1677ff', fontSize: 20 }} /> 知识图谱
+              <Card className="kh-quick-card" hoverable onClick={() => navigate('/graph')}>
+                <ClusterOutlined className="kh-quick-icon" /> 知识图谱
               </Card>
             </Col>
           </>
         ) : null}
       </Row>
-      <div className="kh-page" style={{ marginTop: 16, minHeight: 0 }}>
-        <h3 style={{ marginTop: 0 }}>最近可见文档</h3>
+      <div className="kh-page" style={{ marginTop: 16 }}>
+        <h3 className="kh-section-title">最近可见文档</h3>
         <Table
           rowKey="id"
           size="middle"

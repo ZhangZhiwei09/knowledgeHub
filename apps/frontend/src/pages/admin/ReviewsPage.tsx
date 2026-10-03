@@ -37,6 +37,7 @@ export default function ReviewsPage() {
 
   return (
     <div className="kh-page">
+      <h2 className="kh-page-title">审核工作台</h2>
       <Space style={{ marginBottom: 16 }}>
         <Select
           value={status}

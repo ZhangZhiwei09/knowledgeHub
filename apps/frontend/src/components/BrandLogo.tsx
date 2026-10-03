@@ -10,20 +10,20 @@ export function BrandLogo({ size = 28 }: { size?: number }) {
       aria-hidden
       style={{ display: 'block', flexShrink: 0 }}
     >
-      <rect width="32" height="32" rx="8" fill="#1677ff" />
+      <rect width="32" height="32" rx="8" fill="var(--kh-primary)" />
       <path
         d="M16 12.6V8.6M19.1 17.8l3.9 2.2M12.9 17.8L9 20"
-        stroke="#fff"
+        stroke="var(--kh-bg-container)"
         strokeWidth="1.7"
         strokeLinecap="round"
       />
-      <circle cx="16" cy="16" r="3.4" fill="#fff" />
-      <circle cx="16" cy="7.2" r="2" fill="#69b1ff" />
-      <circle cx="24.8" cy="21.2" r="2" fill="#69b1ff" />
-      <circle cx="7.2" cy="21.2" r="2" fill="#69b1ff" />
-      <circle cx="16" cy="7.2" r="1.15" fill="#fff" />
-      <circle cx="24.8" cy="21.2" r="1.15" fill="#fff" />
-      <circle cx="7.2" cy="21.2" r="1.15" fill="#fff" />
+      <circle cx="16" cy="16" r="3.4" fill="var(--kh-bg-container)" />
+      <circle cx="16" cy="7.2" r="2" fill="var(--kh-primary-border)" />
+      <circle cx="24.8" cy="21.2" r="2" fill="var(--kh-primary-border)" />
+      <circle cx="7.2" cy="21.2" r="2" fill="var(--kh-primary-border)" />
+      <circle cx="16" cy="7.2" r="1.15" fill="var(--kh-bg-container)" />
+      <circle cx="24.8" cy="21.2" r="1.15" fill="var(--kh-bg-container)" />
+      <circle cx="7.2" cy="21.2" r="1.15" fill="var(--kh-bg-container)" />
     </svg>
   )
 }

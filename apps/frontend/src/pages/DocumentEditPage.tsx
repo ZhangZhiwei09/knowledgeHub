@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Button, Empty, Form, Input, Select, Spin, Switch, message } from 'antd'
+import { Button, Form, Input, Select, Switch, message } from 'antd'
+import { LoadingSkeleton, NoPermission } from '../components/states'
 import { documentApi, teamApi } from '../api'
 import { ApiError } from '../api/client'
 import type { DocumentItem, TeamItem } from '../types'
@@ -71,7 +72,7 @@ export default function DocumentEditPage() {
   if (loading) {
     return (
       <div className="kh-page">
-        <Spin />
+        <LoadingSkeleton rows={6} />
       </div>
     )
   }
@@ -79,9 +80,7 @@ export default function DocumentEditPage() {
   if (forbidden) {
     return (
       <div className="kh-page">
-        <Empty description="无权编辑该文档">
-          <Button onClick={() => navigate('/documents')}>返回列表</Button>
-        </Empty>
+        <NoPermission title="无权编辑该文档" subTitle="你当前的角色/权限不足，无法编辑该文档。" />
       </div>
     )
   }

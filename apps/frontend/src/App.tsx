@@ -15,6 +15,7 @@ import UsersPage from './pages/admin/UsersPage'
 import RolesPage from './pages/admin/RolesPage'
 import TeamsPage from './pages/admin/TeamsPage'
 import ReviewsPage from './pages/admin/ReviewsPage'
+import { NoPermission } from './components/states'
 import { can, isAdmin, isReviewer } from './utils'
 
 function Guard({ children }: { children: ReactNode }) {
@@ -25,7 +26,8 @@ function Guard({ children }: { children: ReactNode }) {
 
 function Perm({ code, children }: { code: string; children: ReactNode }) {
   const user = useAuth()
-  if (!can(user, code)) return <Navigate to="/dashboard" replace />
+  if (!can(user, code))
+    return <NoPermission subTitle={`你当前的角色/权限不足（需 ${code}），无法查看该页面。如需访问，请联系管理员申请权限。`} />
   return children
 }
 
@@ -111,19 +113,19 @@ export default function App() {
         />
         <Route
           path="admin/users"
-          element={isAdmin(user) ? <UsersPage /> : <Navigate to="/dashboard" replace />}
+          element={isAdmin(user) ? <UsersPage /> : <NoPermission subTitle="你当前的角色/权限不足（需管理员），无法查看该页面。" />}
         />
         <Route
           path="admin/roles"
-          element={isAdmin(user) ? <RolesPage /> : <Navigate to="/dashboard" replace />}
+          element={isAdmin(user) ? <RolesPage /> : <NoPermission subTitle="你当前的角色/权限不足（需管理员），无法查看该页面。" />}
         />
         <Route
           path="admin/teams"
-          element={isAdmin(user) ? <TeamsPage /> : <Navigate to="/dashboard" replace />}
+          element={isAdmin(user) ? <TeamsPage /> : <NoPermission subTitle="你当前的角色/权限不足（需管理员），无法查看该页面。" />}
         />
         <Route
           path="admin/reviews"
-          element={isReviewer(user) ? <ReviewsPage /> : <Navigate to="/dashboard" replace />}
+          element={isReviewer(user) ? <ReviewsPage /> : <NoPermission subTitle="你当前的角色/权限不足（需审核员），无法查看该页面。" />}
         />
       </Route>
       <Route path="*" element={<Navigate to={user ? '/dashboard' : '/login'} replace />} />

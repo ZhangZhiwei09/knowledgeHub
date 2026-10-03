@@ -33,6 +33,7 @@
   --kh-success: #389E0D;
   --kh-warning: #D48806;
   --kh-error: #CF1322;
+  /* 检索命中 / AI 引用高亮，全站唯一一处非蓝强调色 */
   --kh-highlight: #FFE9A8;
 
   /* 图谱分类色只留 CSS 侧真正消费的两个——图例圆点与 canvas 取色走

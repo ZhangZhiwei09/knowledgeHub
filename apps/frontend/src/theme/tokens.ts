@@ -26,7 +26,6 @@ export const KH_COLORS = {
   textQuaternary: '#BFBFBF',
 
   border: '#D9D9D9',
-  borderSecondary: '#E5E5E5',
   borderHairline: '#F0F0F0',
 
   bgLayout: '#FAFAFA',
@@ -38,8 +37,6 @@ export const KH_COLORS = {
   success: '#389E0D',
   warning: '#D48806',
   error: '#CF1322',
-  /** 检索命中 / AI 引用高亮，全站唯一一处非蓝强调色 */
-  highlight: '#FFE9A8',
 
   /** 知识图谱分类色：ForceGraph 的 echarts 配置与 GraphPage 图例共用 */
   graph: {
@@ -49,14 +46,6 @@ export const KH_COLORS = {
     organization: '#13C2C2',
     tag: '#722ED1',
   },
-} as const
-
-/** 动效时长与缓动，与 index.css 的 --kh-dur-* / --kh-ease 保持一致 */
-export const KH_MOTION = {
-  fast: 120,
-  base: 200,
-  slow: 320,
-  ease: 'cubic-bezier(.2, 0, 0, 1)',
 } as const
 
 /**

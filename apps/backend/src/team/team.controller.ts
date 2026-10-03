@@ -19,6 +19,10 @@ import { RequirePermission } from '../auth/decorators/require-permission.decorat
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RoleCode } from '../common/constants/roles';
 
+/**
+ * 团队管理接口：团队 CRUD、成员维护。
+ * 需 ROLE_ADMIN；权限码 system:team。
+ */
 @Controller('teams')
 @Roles(RoleCode.ADMIN)
 export class TeamController {

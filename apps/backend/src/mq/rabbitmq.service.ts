@@ -27,6 +27,12 @@ import {
 
 export type MessageHandler = (msg: ConsumeMessage) => Promise<void> | void;
 
+/**
+ * RabbitMQ 连接与拓扑（交换机/队列/绑定）。
+ *
+ * <p>提供 publish / consume；RABBITMQ_ENABLED=false 时空操作。</p>
+ * <p>不解析业务消息，由 Publisher / Consumer 处理。</p>
+ */
 @Injectable()
 export class RabbitMqService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RabbitMqService.name);

@@ -8,6 +8,10 @@ import type { AuthUser } from './auth-user.interface';
 import { Roles } from './decorators/roles.decorator';
 import { RoleCode } from '../common/constants/roles';
 
+/**
+ * 认证接口：注册 / 登录 / 刷新 / 邮箱激活 / 密码重置。
+ * 业务逻辑在 AuthService；多数路由 @Public。
+ */
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

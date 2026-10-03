@@ -1,16 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { EntityManager } from 'typeorm';
 import {
   DocumentEntity,
   DocumentStatus,
 } from '../document/entities/document.entity';
-import {
-  DocumentContent,
-  DocumentContentDocument,
-} from '../document/schemas/document-content.schema';
+import { DocumentContentEntity } from '../document/entities/document-content.entity';
 import { ChunkingService } from './chunking.service';
 import { EmbeddingService } from './embedding.service';
 import { GraphBuildService } from './graph-build.service';
@@ -22,7 +17,7 @@ import { PipelineDocument } from './types/pipeline.types';
  * 发布后知识管线编排器
  *
  * <p>RAG：分块 → Embedding → ES kh_chunk</p>
- * <p>Search：Mongo 全文 → ES kh_document</p>
+ * <p>Search：PG 全文 → ES kh_document</p>
  * <p>KG：分块 → 抽实体关系 → Neo4j</p>
  *
  * <p>由 {@link DocumentPipelineConsumer} 在消费到 MQ 消息后调用；</p>
@@ -35,8 +30,6 @@ export class PipelineOrchestrator {
   constructor(
     @InjectEntityManager()
     private readonly em: EntityManager,
-    @InjectModel(DocumentContent.name)
-    private readonly contentModel: Model<DocumentContentDocument>,
     private readonly chunkingService: ChunkingService,
     private readonly embeddingService: EmbeddingService,
     private readonly vectorIndexService: VectorIndexService,
@@ -77,7 +70,7 @@ export class PipelineOrchestrator {
 
   /**
    * 处理 Search 索引消息。
-   * INDEX：按 documentId 从 Postgres + Mongo 拉全文，写入 ES kh_document。
+   * INDEX：按 documentId 从 Postgres 拉全文，写入 ES kh_document。
    * DELETE：按 documentId 删除。
    */
   async handleSearchIndex(type: string, documentId: string) {
@@ -175,7 +168,7 @@ export class PipelineOrchestrator {
     return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
   }
 
-  /** 按 ID 列表加载元数据 + Mongo 正文 */
+  /** 按 ID 列表加载元数据 + 正文 */
   private async loadDocumentsByIds(ids: string[]): Promise<PipelineDocument[]> {
     const result: PipelineDocument[] = [];
     for (const id of ids) {
@@ -183,9 +176,9 @@ export class PipelineOrchestrator {
         where: { id, deleted: false },
       });
       if (!doc) continue;
-      const contentDoc = await this.contentModel
-        .findOne({ _id: doc.contentId, deleted: false })
-        .lean();
+      const contentDoc = await this.em.findOne(DocumentContentEntity, {
+        where: { documentId: doc.id, deleted: false },
+      });
       result.push(this.toPipelineDoc(doc, contentDoc?.content ?? ''));
     }
     return result;
@@ -198,15 +191,15 @@ export class PipelineOrchestrator {
     });
     const result: PipelineDocument[] = [];
     for (const doc of docs) {
-      const contentDoc = await this.contentModel
-        .findOne({ _id: doc.contentId, deleted: false })
-        .lean();
+      const contentDoc = await this.em.findOne(DocumentContentEntity, {
+        where: { documentId: doc.id, deleted: false },
+      });
       result.push(this.toPipelineDoc(doc, contentDoc?.content ?? ''));
     }
     return result;
   }
 
-  /** Postgres 元数据 + Mongo 全文 → ES kh_document 文档 */
+  /** Postgres 元数据 + 全文 → ES kh_document 文档 */
   private toSearchIndexDoc(doc: PipelineDocument): Record<string, unknown> {
     return {
       id: doc.id,
@@ -227,7 +220,7 @@ export class PipelineOrchestrator {
     };
   }
 
-  /** Postgres 实体 + Mongo 正文 → 管线统一 DTO */
+  /** Postgres 实体 + 正文 → 管线统一 DTO */
   private toPipelineDoc(
     doc: DocumentEntity,
     content: string,

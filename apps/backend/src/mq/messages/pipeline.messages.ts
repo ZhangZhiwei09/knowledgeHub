@@ -7,7 +7,7 @@ export interface ReindexMessage {
   documentIds?: string[];
 }
 
-/** ES 搜索索引消息（只带 documentId，消费者从 Mongo 拉全文） */
+/** ES 搜索索引消息（只带 documentId，消费者从 PG 拉全文） */
 export type SearchIndexType = 'INDEX' | 'DELETE';
 
 export interface SearchIndexMessage {

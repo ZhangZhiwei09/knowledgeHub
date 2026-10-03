@@ -5,6 +5,7 @@ import { ApiError } from '../api/client'
 import type { TeamItem, UserStats } from '../types'
 import { updateUser, useAuth } from '../auth'
 
+/** 个人中心：资料、密码、所属团队与使用统计 */
 export default function ProfilePage() {
   const user = useAuth()
   const [stats, setStats] = useState<UserStats | null>(null)
@@ -23,18 +24,37 @@ export default function ProfilePage() {
 
   return (
     <div className="kh-page">
+      <h2 className="kh-page-title">个人中心</h2>
       <Row gutter={16}>
         <Col span={8}>
-          <Statistic title="我的文档" value={stats?.documentCount ?? 0} />
+          <Card className="kh-stat-card">
+            <Statistic
+              title="我的文档"
+              value={stats?.documentCount ?? 0}
+              valueStyle={{ color: 'var(--kh-primary-strong)', fontWeight: 700 }}
+            />
+          </Card>
         </Col>
         <Col span={8}>
-          <Statistic title="浏览" value={stats?.viewCount ?? 0} />
+          <Card className="kh-stat-card">
+            <Statistic
+              title="浏览"
+              value={stats?.viewCount ?? 0}
+              valueStyle={{ color: 'var(--kh-primary-strong)', fontWeight: 700 }}
+            />
+          </Card>
         </Col>
         <Col span={8}>
-          <Statistic title="点赞" value={stats?.likeCount ?? 0} />
+          <Card className="kh-stat-card">
+            <Statistic
+              title="点赞"
+              value={stats?.likeCount ?? 0}
+              valueStyle={{ color: 'var(--kh-primary-strong)', fontWeight: 700 }}
+            />
+          </Card>
         </Col>
       </Row>
-      <Card title="资料" style={{ marginTop: 24 }}>
+      <Card title="资料" style={{ marginTop: 16 }}>
         <Form
           form={profileForm}
           layout="vertical"
@@ -62,7 +82,7 @@ export default function ProfilePage() {
                 ))}
               </div>
             ) : (
-              <span style={{ color: '#8c8c8c' }}>暂未加入团队</span>
+              <span style={{ color: 'var(--kh-text-tertiary)' }}>暂未加入团队</span>
             )}
           </Form.Item>
           <Form.Item name="realName" label="姓名">

@@ -1,9 +1,4 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import {
-  DocumentContent,
-  DocumentContentSchema,
-} from '../document/schemas/document-content.schema';
 import { ChunkingService } from './chunking.service';
 import { EmbeddingService } from './embedding.service';
 import { ExtractionService } from './extraction.service';
@@ -12,12 +7,11 @@ import { PipelineOrchestrator } from './pipeline.orchestrator';
 import { SearchIndexService } from './search-index.service';
 import { VectorIndexService } from './vector-index.service';
 
+/**
+ * 知识管线模块：分块 / Embedding / ES 索引 / KG 抽取建图 / 编排器。
+ * 无 Controller；由 MQ 消费与 Search/Graph/AI 复用导出服务。
+ */
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: DocumentContent.name, schema: DocumentContentSchema },
-    ]),
-  ],
   providers: [
     ChunkingService,
     EmbeddingService,

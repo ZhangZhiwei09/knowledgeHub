@@ -10,6 +10,10 @@ interface JwtPayload {
   type: 'access' | 'refresh';
 }
 
+/**
+ * Passport JWT 策略：校验 Bearer access token，组装 AuthUser。
+ * 拒绝 refresh 类型载荷。
+ */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(

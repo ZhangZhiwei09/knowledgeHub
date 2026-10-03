@@ -8,6 +8,11 @@ import { HybridRetrievalService } from './hybrid-retrieval.service';
 import { RerankerService } from './reranker.service';
 import { WebSearchService } from './web-search.service';
 
+/**
+ * AI 模块：RAG 检索、同步/流式对话、会话管理。
+ * - 检索依赖 PipelineModule（向量/关键词索引）
+ * - 建索引不在此模块
+ */
 @Module({
   imports: [PipelineModule],
   controllers: [AiController],

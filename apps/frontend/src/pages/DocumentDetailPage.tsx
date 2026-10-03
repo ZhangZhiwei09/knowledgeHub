@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Button, Empty, Popconfirm, Space, Spin, Tag, Typography, message } from 'antd'
+import { Button, Popconfirm, Space, Tag, Typography, message } from 'antd'
+import { EmptyState, LoadingSkeleton, NoPermission } from '../components/states'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { documentApi } from '../api'
@@ -10,6 +11,7 @@ import { useAuth } from '../auth'
 import { DOC_STATUS, can, canWriteDocument, formatTime, visibilityMeta } from '../utils'
 import { FileTypeIcon } from '../components/FileTypeIcon'
 
+/** 文档详情：Markdown 正文、状态与删除/编辑入口 */
 export default function DocumentDetailPage() {
   const { id = '' } = useParams()
   const navigate = useNavigate()
@@ -43,19 +45,24 @@ export default function DocumentDetailPage() {
   if (loading) {
     return (
       <div className="kh-page">
-        <Spin />
+        <LoadingSkeleton rows={6} />
       </div>
     )
   }
 
   if (!doc) {
+    if (forbidden) {
+      return (
+        <div className="kh-page">
+          <NoPermission title="无权查看该文档" subTitle="你当前的角色/权限不足，无法查看该文档。" />
+        </div>
+      )
+    }
     return (
       <div className="kh-page">
-        <Empty
-          description={forbidden ? '无权查看该文档' : '文档不存在或已删除'}
-        >
+        <EmptyState description="文档不存在或已删除">
           <Button onClick={() => navigate('/documents')}>返回列表</Button>
-        </Empty>
+        </EmptyState>
       </div>
     )
   }
@@ -141,7 +148,7 @@ export default function DocumentDetailPage() {
       <Space wrap>
         <Tag color={status?.color}>{status?.label}</Tag>
         <Tag color={vis.color}>{vis.label}</Tag>
-        <span style={{ color: '#8c8c8c' }}>更新于 {formatTime(doc.updatedAt)}</span>
+        <span style={{ color: 'var(--kh-text-tertiary)' }}>更新于 {formatTime(doc.updatedAt)}</span>
       </Space>
       {doc.summary ? (
         <Typography.Paragraph type="secondary" style={{ marginTop: 12 }}>

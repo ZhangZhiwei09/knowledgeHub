@@ -8,6 +8,7 @@ import { useAuth } from '../auth'
 import { DOC_STATUS, can, canWriteDocument, formatTime, visibilityMeta } from '../utils'
 import { FileTypeIcon, fileTypeLabel } from '../components/FileTypeIcon'
 
+/** 文档列表：筛选、上传、进入详情/编辑 */
 export default function DocumentsPage() {
   const user = useAuth()
   const navigate = useNavigate()
@@ -46,9 +47,7 @@ export default function DocumentsPage() {
 
   return (
     <div className="kh-page">
-      <p className="kh-access-hint">
-        列表只展示你能看的文档：公开、所在团队，以及自己写的。编辑 / 发布仅作者或管理员可用。
-      </p>
+      <h2 className="kh-page-title">文档管理</h2>
       <Space style={{ marginBottom: 16 }} wrap>
         <Input
           allowClear

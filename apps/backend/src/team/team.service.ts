@@ -15,6 +15,10 @@ import {
   UpdateTeamDto,
 } from './dto/team.dto';
 
+/**
+ * 团队服务：团队 CRUD、成员增删、树形结构。
+ * 数据在 kh_team / kh_team_member。
+ */
 @Injectable()
 export class TeamService {
   constructor(

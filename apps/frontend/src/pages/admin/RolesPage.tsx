@@ -12,6 +12,7 @@ function toTree(nodes: PermissionNode[]): { title: string; key: string; children
   }))
 }
 
+/** 管理端：角色维护与权限树勾选 */
 export default function RolesPage() {
   const [items, setItems] = useState<RoleItem[]>([])
   const [tree, setTree] = useState<PermissionNode[]>([])
@@ -35,6 +36,7 @@ export default function RolesPage() {
 
   return (
     <div className="kh-page">
+      <h2 className="kh-page-title">角色权限</h2>
       <Button type="primary" style={{ marginBottom: 16 }} onClick={() => setCreateOpen(true)}>
         新建角色
       </Button>

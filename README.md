@@ -8,8 +8,7 @@
 
 | 能力 | 选型 |
 | --- | --- |
-| 关系型存储 | PostgreSQL（`pgvector` 扩展，向量检索） via TypeORM |
-| 文档内容 | MongoDB via Mongoose |
+| 关系型存储 | PostgreSQL（`pgvector` 扩展；文档元数据 + 正文） via TypeORM |
 | 缓存 / 验证码 | Redis |
 | 异步任务 | RabbitMQ（文档发布后触发 RAG / KG / ES 索引） |
 | 全文检索 | Elasticsearch（IK 分词，不可用时跳过写入） |
@@ -44,7 +43,7 @@ knowledgeHub/
 │   │   └── .env.example         # 环境变量模板
 │   └── frontend/                # React 前端
 ├── elasticsearch/               # 带 IK 插件的 ES 镜像构建
-├── init-scripts/                # postgres / mongodb 初始化脚本
+├── init-scripts/                # postgres 初始化脚本
 └── docker-compose.yml           # 全部基础设施
 ```
 
@@ -108,10 +107,8 @@ cd apps/frontend && pnpm dev
 | --- | --- | --- |
 | 后端 API | 3000 | `PORT` 可改 |
 | 前端 dev | 5173 | 代理 `/api` → `127.0.0.1:3000` |
-| PostgreSQL | 5432 | pgvector，库 `knowledge_hub` |
+| PostgreSQL | 5433 | pgvector，库 `knowledge_hub`（宿主机 5432 常被本机 PG 占用，故映射 5433） |
 | pgAdmin | 8088 | `admin@admin.com` / `admin` |
-| MongoDB | 27017 | 库 `knowledge_hub` |
-| mongo-express | 8081 | `me_admin` / `me_123456` |
 | Redis | 6379 | |
 | RedisInsight | 5540 | |
 | RabbitMQ | 5672 / 15672 | `guest` / `guest`，15672 为管理台 |
@@ -130,7 +127,6 @@ cd apps/frontend && pnpm dev
 | --- | --- |
 | 服务 | `PORT` |
 | PostgreSQL | `POSTGRES_HOST` `POSTGRES_PORT` `POSTGRES_USER` `POSTGRES_PASSWORD` `POSTGRES_DB` |
-| MongoDB | `MONGO_URI` |
 | 雪花 ID | `SNOWFLAKE_WORKER_ID`（0–1023，分布式各实例需唯一）、`SNOWFLAKE_OFFSET` |
 | 对象存储 | `RUSTFS_ENABLED` `RUSTFS_ENDPOINT` `RUSTFS_PUBLIC_URL` `RUSTFS_ACCESS_KEY` `RUSTFS_SECRET_KEY` `RUSTFS_BUCKET` `RUSTFS_REGION` |
 | 消息队列 | `RABBITMQ_ENABLED` `RABBITMQ_URL` |

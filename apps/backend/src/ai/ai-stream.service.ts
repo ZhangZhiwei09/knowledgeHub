@@ -50,6 +50,11 @@ type KhUIMessage = UIMessage<
   }
 >;
 
+/**
+ * 流式 RAG 对话（Vercel AI SDK Data Stream）。
+ *
+ * <p>混合检索 → Agent（可 web_search）→ 流式写出；落库委托 ChatSessionService。</p>
+ */
 @Injectable()
 export class AiStreamService {
   private readonly logger = new Logger(AiStreamService.name);

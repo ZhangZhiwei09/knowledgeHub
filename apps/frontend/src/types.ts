@@ -1,3 +1,4 @@
+/** 前端共享类型：用户、文档、检索、对话、图谱与管理端 VO */
 export interface AuthUser {
   userId: string
   username: string

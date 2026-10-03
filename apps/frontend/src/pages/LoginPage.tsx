@@ -6,6 +6,7 @@ import { ApiError } from '../api/client'
 import { setAuth } from '../auth'
 import { BrandLogo } from '../components/BrandLogo'
 
+/** 登录页：账号密码换取 token 并写入 auth */
 export default function LoginPage() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)

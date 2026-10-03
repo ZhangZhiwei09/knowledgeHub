@@ -5,6 +5,7 @@ import { ApiError } from '../../api/client'
 import type { RoleItem, UserVO } from '../../types'
 import { formatTime } from '../../utils'
 
+/** 管理端：用户列表、角色分配与重置密码 */
 export default function UsersPage() {
   const [keyword, setKeyword] = useState('')
   const [page, setPage] = useState(1)
@@ -44,6 +45,7 @@ export default function UsersPage() {
 
   return (
     <div className="kh-page">
+      <h2 className="kh-page-title">用户管理</h2>
       <Space style={{ marginBottom: 16 }}>
         <Input
           placeholder="用户名 / 姓名 / 邮箱"

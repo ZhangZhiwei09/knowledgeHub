@@ -11,6 +11,10 @@ import { RoleEntity } from './entities/role.entity';
 import { UserRoleEntity } from './entities/user-role.entity';
 import { CreateRoleDto, UpdateRoleDto } from './dto/extra.dto';
 
+/**
+ * 角色服务：角色 CRUD（kh_role）。
+ * 角色-权限绑定见 PermissionService。
+ */
 @Injectable()
 export class RoleService {
   constructor(

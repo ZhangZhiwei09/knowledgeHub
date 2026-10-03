@@ -52,7 +52,7 @@ export class SearchIndexService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * Upsert 一篇文档的搜索记录（含 Mongo 全文）。
+   * Upsert 一篇文档的搜索记录（含正文全文）。
    */
   async indexDocument(doc: Record<string, unknown>) {
     if (!this.es) {

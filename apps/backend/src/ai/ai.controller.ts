@@ -27,6 +27,10 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { PermissionCode } from '../common/constants/permissions';
 import type { AuthUser } from '../auth/auth-user.interface';
 
+/**
+ * AI 接口：RAG 检索、同步/流式对话、会话 CRUD。
+ * 不写索引，检索与生成委托给 HybridRetrieval / AiChat / AiStream。
+ */
 @Controller()
 export class AiController {
   constructor(

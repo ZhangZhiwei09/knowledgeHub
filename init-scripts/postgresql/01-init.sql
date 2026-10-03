@@ -5,7 +5,6 @@ CREATE EXTENSION IF NOT EXISTS vector;
 CREATE TABLE IF NOT EXISTS kh_document (
     id BIGINT PRIMARY KEY,
     title VARCHAR NOT NULL,
-    content_id VARCHAR NOT NULL UNIQUE,
     summary VARCHAR,
     category_id BIGINT,
     team_id BIGINT,
@@ -26,6 +25,18 @@ CREATE TABLE IF NOT EXISTS kh_document (
     create_by BIGINT,
     update_by BIGINT,
     deleted BOOLEAN NOT NULL DEFAULT false
+);
+
+-- 文档正文（与 kh_document 1:1；PK 兼 FK，物理删父行时 CASCADE）
+CREATE TABLE IF NOT EXISTS kh_document_content (
+    document_id BIGINT PRIMARY KEY REFERENCES kh_document(id) ON DELETE CASCADE,
+    content TEXT NOT NULL DEFAULT '',
+    content_length INT NOT NULL DEFAULT 0,
+    content_summary TEXT NOT NULL DEFAULT '',
+    version INT NOT NULL DEFAULT 1,
+    deleted BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- 文档发布审核记录

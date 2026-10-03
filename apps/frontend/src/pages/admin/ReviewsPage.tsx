@@ -6,6 +6,7 @@ import { ApiError } from '../../api/client'
 import type { ReviewTask } from '../../types'
 import { formatTime } from '../../utils'
 
+/** 管理端：文档审核队列（通过/驳回） */
 export default function ReviewsPage() {
   const [status, setStatus] = useState<'pending' | 'approved' | 'rejected'>('pending')
   const [items, setItems] = useState<ReviewTask[]>([])
@@ -36,6 +37,7 @@ export default function ReviewsPage() {
 
   return (
     <div className="kh-page">
+      <h2 className="kh-page-title">审核工作台</h2>
       <Space style={{ marginBottom: 16 }}>
         <Select
           value={status}

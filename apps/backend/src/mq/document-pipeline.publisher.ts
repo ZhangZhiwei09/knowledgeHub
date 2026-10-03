@@ -76,7 +76,7 @@ export class DocumentPipelinePublisher {
   }
 
   /**
-   * Search：只投 documentId。消费者从 Postgres + Mongo 拉全文再写 ES，
+   * Search：只投 documentId。消费者从 Postgres 拉全文再写 ES，
    * 避免 MQ 塞正文、也不再截断前 1000 字。
    */
   private async triggerSearchIndex(documentId: string) {

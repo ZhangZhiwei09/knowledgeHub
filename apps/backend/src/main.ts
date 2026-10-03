@@ -1,3 +1,6 @@
+/**
+ * NestJS 入口：创建应用、CORS、全局 ValidationPipe，监听 PORT。
+ */
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';

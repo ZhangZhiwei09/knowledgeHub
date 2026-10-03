@@ -1,3 +1,6 @@
+/**
+ * 通用工具：文档状态文案、时间格式、权限判断、团队扁平化、高亮安全处理等。
+ */
 import type { AuthUser, TeamItem, TeamTreeNode } from './types'
 
 export const DOC_STATUS: Record<number, { label: string; color: string }> = {

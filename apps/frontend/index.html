@@ -4,6 +4,26 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 只引西文字体 Geist（约 100KB 子集）。中文走系统 PingFang / 微软雅黑，
+         不引中文 Web 字体——思源黑单文件 5-15MB，企业内网不划算。
+
+         异步加载：media="print" 让浏览器不把这张表当渲染阻塞资源，onload 后切回
+         all 才生效。内网出不去时首屏不会被 CDN 连接超时拖住，字体静默降级到
+         下面的系统字体栈（tokens.ts / index.css 的 font-family）。 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
     <title>Knowledge Hub</title>
   </head>
   <body>
